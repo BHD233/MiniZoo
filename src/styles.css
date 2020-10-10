@@ -1,0 +1,19 @@
+.navbar-nav {
+  right: 1;
+  width: 80%;
+  padding: 0 5rem 0 5rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.navbar-nav > .nav-item {
+  flex: 1;
+}
+
+/* aboutus.html */
+
+.about-us {
+  width: 100%;
+
+  background-color: rgb(119, 119, 119);
+}
