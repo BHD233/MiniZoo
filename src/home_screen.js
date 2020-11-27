@@ -1,25 +1,104 @@
-function InitScreen() {
-    var canvas = document.getElementById('glCanvas');
+import GLTFLoader from "./GLTFLoader.js";
+import { OrbitControls } from "./OrbitControls.js";
+import * as THREE from "./three.module.js";
 
-    let width =
-        window.innerWidth ||
-        document.documentElement.clientWidth ||
-        document.body.clientWidth;
-  
-    var height =
-        window.innerHeight ||
-        document.documentElement.clientHeight ||
-        document.body.clientHeight;
-    
-    canvas.width = width - 30;
-    canvas.height = height - 30;
+(function () {
+  var container, stats;
 
-    console.log("HELLO");
+  var camera, scene, renderer, controls;
 
-    var gl = canvas.getContext('webgl');
+  var myOBJ = null;
 
-    gl.clearColor(0.75, 0.85, 0.8, 1.0);
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-}
+  var mouseX = 0,
+    mouseY = 0;
 
-InitScreen();
+  var windowHalfX = window.innerWidth / 2;
+  var windowHalfY = window.innerHeight / 2;
+
+  // boolean
+  var isUpward = true;
+
+  var FLUFF_OBJ_NUM = 100;
+
+  init();
+  animate();
+
+  function init() {
+    container = document.createElement("div");
+    document.body.appendChild(container);
+
+    camera = new THREE.PerspectiveCamera(
+      45,
+      window.innerWidth / window.innerHeight,
+      1,
+      2000
+    );
+    //camera.position.z = 200;
+    camera.position.z = 120;
+    camera.position.y = 100;
+    camera.up = new THREE.Vector3(0, 0, 1);
+    camera.lookAt(new THREE.Vector3(0, 0, 0));
+
+    renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    // controls
+    controls = new OrbitControls(camera, renderer.domElement);
+
+    // scene
+    scene = new THREE.Scene();
+
+    var ambient = new THREE.AmbientLight(0xd0caca);
+    scene.add(ambient);
+
+    var directionalLight = new THREE.DirectionalLight(0xffeedd);
+    directionalLight.position.set(0, 0, 1);
+    scene.add(directionalLight);
+
+    // instantiate a loader
+    var loader = new GLTFLoader.GLTFLoader();
+
+    // Load a glTF resource
+    loader.load(
+      // resource URL
+      "./model/bee.glb",
+      // called when the resource is loaded
+      function (gltf) {
+        scene.add(gltf.scene);
+
+        gltf.animations; // Array<THREE.AnimationClip>
+        myOBJ = gltf.scene; // THREE.Group
+        gltf.scenes; // Array<THREE.Group>
+        gltf.cameras; // Array<THREE.Camera>
+        gltf.asset; // Object
+
+        myOBJ.rotation.x = 15;
+
+        render();
+      },
+      // called while loading is progressing
+      function (xhr) {
+        console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
+      },
+      // called when loading has errors
+      function (error) {
+        console.log(error);
+      }
+    );
+  }
+
+  var render = function () {
+    renderer.render(scene, camera);
+  };
+
+  function animate() {
+    requestAnimationFrame(animate);
+
+    // if (myOBJ != null) {
+    //     myOBJ.rotation.y += 50;
+    // }
+    //controls.update();
+    renderer.render(scene, camera);
+  }
+})();
