@@ -3,9 +3,10 @@ import { OrbitControls } from "./OrbitControls.js";
 import * as THREE from "./three.module.js";
 
 (function () {
-  var container, stats;
+  var container, stats, mixer;
+  var buttonField = document.getElementById("button_field");
 
-  var camera, scene, renderer, controls;
+  var camera, scene, renderer, controls, animations, curAnimation, action;
 
   var myOBJ = null;
 
@@ -20,6 +21,7 @@ import * as THREE from "./three.module.js";
 
   var FLUFF_OBJ_NUM = 100;
 
+  var clock = new THREE.Clock();
   init();
   animate();
 
@@ -65,7 +67,18 @@ import * as THREE from "./three.module.js";
       "./model/bee.glb",
       // called when the resource is loaded
       function (gltf) {
+        //load animation
+        mixer = new THREE.AnimationMixer( gltf.scene );
+        animations = gltf.animations;
+        action = mixer.clipAction( animations[0] );
+
+        console.log(action);
+
+        action.play();
         scene.add(gltf.scene);
+
+        //add animation option
+        addAnimationButton();
 
         gltf.animations; // Array<THREE.AnimationClip>
         myOBJ = gltf.scene; // THREE.Group
@@ -93,6 +106,8 @@ import * as THREE from "./three.module.js";
   };
 
   function animate() {
+    if ( mixer ) 
+        mixer.update( clock.getDelta() );
     requestAnimationFrame(animate);
 
     // if (myOBJ != null) {
@@ -100,5 +115,22 @@ import * as THREE from "./three.module.js";
     // }
     //controls.update();
     renderer.render(scene, camera);
+  }
+
+  function addAnimationButton(){
+      for (var i = 0; i < animations.length; i++) {
+        var button = document.createElement("button");
+        button.innerHTML = "animation " + i;
+        button.id = i;
+
+        button.addEventListener("click", function() {
+            console.log(this.id);
+            mixer = new THREE.AnimationMixer( scene );
+            action = mixer.clipAction( animations[this.id] );
+            action.play();
+        })
+
+        buttonField.appendChild(button);
+      }
   }
 })();
