@@ -1,0 +1,90 @@
+body 
+{
+	background: #252728;
+	margin: 0px;
+}
+
+.col-sm-10, .col-md-10
+{
+	padding: 0px;
+}
+
+.table
+{
+	color: white;
+}
+
+#top
+{
+	background: #232526;  /* fallback for old browsers */
+	background: -webkit-linear-gradient(to right, #414345, #232526);  /* Chrome 10-25, Safari 5.1-6 */
+	background: linear-gradient(to right, #414345, #232526); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    overflow : auto;
+    text-align: center;
+    color: white;
+	padding: 10px;
+}
+
+#canvas 
+{
+	display: block;
+	background: lightgrey;
+	overflow: auto;
+	width: 100%;
+	height: 100%
+}
+
+#right
+{
+	background: #252728;
+}
+
+#td1
+{
+	border-top: 0px;
+}
+
+#dropListContainer, #dropList_1
+{
+	padding: 0px;
+}
+
+.accordion 
+{
+	background-color: #252728;
+	color: white;
+	cursor: pointer;
+	padding: 18px;
+	width: 100%;
+	border: none;
+	text-align: left;
+	outline: none;
+	font-size: 20px;
+	font-weight: bold;
+	/* transition: 0.4s; */
+}
+
+.accordion:after 
+{
+	content: '\025BC';
+	color: white;
+	font-weight: bold;
+	float: right;
+	margin-left: 5px;
+}
+  
+.active:after 
+{
+	content: "\025B2";
+}
+  
+.panel 
+{
+	border-style: none;
+	padding: 0 18px;
+	background-color: #252728;
+	max-height: 0;
+	overflow: hidden;
+	transition: max-height 0.2s ease-out;
+}
+
