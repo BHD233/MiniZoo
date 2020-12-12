@@ -24,9 +24,9 @@ import * as THREE from "./three.module.js";
   animate();
 
   function init() {
-    container = document.createElement("div");
-    document.body.appendChild(container);
+    const container = document.getElementById("container");
 
+    let containerDimensions = container.getBoundingClientRect();
     camera = new THREE.PerspectiveCamera(
       45,
       window.innerWidth / window.innerHeight,
@@ -39,9 +39,16 @@ import * as THREE from "./three.module.js";
     camera.up = new THREE.Vector3(0, 0, 1);
     camera.lookAt(new THREE.Vector3(0, 0, 0));
 
-    renderer = new THREE.WebGLRenderer();
+    renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
-    document.body.appendChild(renderer.domElement);
+
+    // renderer.setSize(containerDimensions.width, containerDimensions.height);
+
+    renderer.outputEncoding = THREE.sRGBEncoding;
+    renderer.shadowMap.enabled = true;
+
+    container.appendChild(renderer.domElement);
 
     // controls
     controls = new OrbitControls(camera, renderer.domElement);
