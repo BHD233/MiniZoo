@@ -18,14 +18,6 @@
     />
     <link rel="stylesheet" type="text/css" href="src/css/UI-Bootstrap.css" />
 
-    <style>
-      /* body {
-        margin: 0;
-      }
-      canvas {
-        display: block;
-      } */
-    </style>
   </head>
   <body>
     <div class="container-fluid">
@@ -34,17 +26,10 @@
           <h1>MiniZoo CP97049</h1>
         </div>
 
-        <div class="col-sm-10 col-md-10" id="left">
-          <div class="col-sm-10 col-md-10" id="container">
-            <!-- <iframe
-              src="index.html"
-              frameborder="0"
-              class="img-responsive"
-            ></iframe> -->
-            <!-- <canvas id="canvas" class="img-responsive"></canvas> -->
-          </div>
+        <div class="col-sm-10 col-md-10" id="container">
+            <canvas id="modelCanvas"></canvas>
         </div>
-
+        
         <div class="col-sm-2 col-md-2" id="right">
           <div class="col-sm-12 col-md-12" id="dropListContainer">
             <table class="table">
@@ -53,35 +38,32 @@
                   <td id="td1">
                     <button class="accordion">Animal</button>
                     <div class="panel">
-                      <img
-                        src="src/icon/shinigami.png"
-                        width="50px"
-                        height="50px"
-                      />
+                      <button class = "animalBtn" id="./model/bee.glb"><img src="src/icon/bee.png" width="50px" height="50px"></button>
+                      <button class = "animalBtn" id="./model/bear.glb"><img src="src/icon/bear.png" width="50px" height="50px"></button>
+                      <button class = "animalBtn" id="./model/crocodile.glb"><img src="src/icon/crocodile.png" width="50px" height="50px"></button>
+                      <button class = "animalBtn" id="./model/deer.glb"><img src="src/icon/deer.png" width="50px" height="50px"></button>
+                      <button class = "animalBtn" id="./model/elephant.glb"><img src="src/icon/elephant.png" width="50px" height="50px"></button>
+                      <button class = "animalBtn" id="./model/flamingo.glb"><img src="src/icon/flamingo.png" width="50px" height="50px"></button>
+                      <button class = "animalBtn" id="./model/giraffe.glb"><img src="src/icon/giraffe.png" width="50px" height="50px"></button>
+                      <button class = "animalBtn" id="./model/gorilla.glb"><img src="src/icon/gorilla.png" width="50px" height="50px"></button>
+                      <button class = "animalBtn" id="./model/rhino.glb"><img src="src/icon/rhino.png" width="50px" height="50px"></button>
+                      <button class = "animalBtn" id="./model/hippo.glb"><img src="src/icon/hippo.png" width="50px" height="50px"></button>
+                      <button class = "animalBtn" id="./model/lion.glb"><img src="src/icon/lion.png" width="50px" height="50px"></button>
+                      <button class = "animalBtn" id="./model/macaw.glb"><img src="src/icon/macaw.png" width="50px" height="50px"></button>
+                      <button class = "animalBtn" id="./model/rabbit.glb"><img src="src/icon/rabbit.png" width="50px" height="50px"></button>
+                      <button class = "animalBtn" id="./model/dragon.glb"><img src="src/icon/dragon.png" width="50px" height="50px"></button>
+                      <button class = "animalBtn" id="./model/stag_beetle.glb"><img src="src/icon/stag_beetle.png" width="50px" height="50px"></button>
+                      <button class = "animalBtn" id="./model/tiger.glb"><img src="src/icon/tiger.png" width="50px" height="50px"></button>
+                      <button class = "animalBtn" id="./model/unicorn.glb"><img src="src/icon/unicorn.png" width="50px" height="50px"></button>
+                      <button class = "animalBtn" id="./model/zebra.glb"><img src="src/icon/zebra.png" width="50px" height="50px"></button>
                     </div>
                   </td>
                 </tr>
                 <tr>
                   <td>
-                    <button class="accordion">Animal</button>
-                    <div class="panel">
-                      <img
-                        src="src/icon/shinigami.png"
-                        width="50px"
-                        height="50px"
-                      />
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <button class="accordion">Animal</button>
-                    <div class="panel">
-                      <img
-                        src="src/icon/shinigami.png"
-                        width="50px"
-                        height="50px"
-                      />
+                    <button class="accordion">Animation</button>
+                    <div class="panel" id="animationBtnField">
+                      <!-- Animation button here! -->
                     </div>
                   </td>
                 </tr>
@@ -93,7 +75,11 @@
     </div>
 
     <!-- Optional JavaScript -->
-    <script src="src/js/func.js"></script>
+    <script src="src/js/index_func.js"></script>
+    <script src="src/js/three.js"></script>
+    <script type="module" src="src/js/GLTFLoader.js"></script>
+
+    <script type="module" src="src/js/home_screen.js"></script>
 
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script
@@ -112,9 +98,5 @@
       crossorigin="anonymous"
     ></script>
 
-    <!-- <script src="src/three.js"></script> -->
-    <!-- <script type="module" src="src/GLTFLoader.js"></script> -->
-
-    <script type="module" src="src/js/home_screen.js"></script>
   </body>
 </html>
