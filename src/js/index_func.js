@@ -12,3 +12,8 @@ for (i = 0; i < acc.length; i++) {
     } 
   });
 }
+
+// init canvas
+var canvas = document.getElementById("modelCanvas");
+canvas.width = document.getElementById("container").offsetWidth;  //window.innerWidth - document.getElementById("right").offsetWidth;
+canvas.height = window.innerHeight - document.getElementById("top").offsetHeight;
