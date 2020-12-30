@@ -29,7 +29,7 @@ import * as THREE from "./three.module.js";
       // create model name
       var div_model = document.createElement("div");
       div_model.id = "div_model";
-      div_model.innerHTML = "Viewing: " + path.slice(8);
+      div_model.innerHTML = "Viewing: " + path.slice(8,-4);
       top.appendChild(div_model);
 
       init(path);
