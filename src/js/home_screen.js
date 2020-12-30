@@ -3,35 +3,49 @@ import { OrbitControls } from "./OrbitControls.js";
 import * as THREE from "./three.module.js";
 
 (function () {
-  var container, stats;
+  var container, stats, mixer;
 
-  var camera, scene, renderer, controls;
+  var camera, scene, renderer, controls, animations, action, path;
 
   var myOBJ = null;
 
   var mouseX = 0,
     mouseY = 0;
 
-  var windowHalfX = window.innerWidth / 2;
+  var animationBtnField = document.getElementById("animationBtnField");
 
-  var windowHalfY = window.innerHeight / 2;
+  var windowHalfX = document.getElementById("container").offsetWidth / 2;
+
+  var windowHalfY = (window.innerHeight - document.getElementById("top").offsetHeight) / 2;
 
   var isUpward = true;
 
   var FLUFF_OBJ_NUM = 100;
 
-  init();
+  var clock = new THREE.Clock();
 
-  animate();
+  // set model path
+  var path = "";
+  var animalBtn = document.getElementsByClassName("animalBtn");
+  
+  for (var i = 0; i < animalBtn.length; i++) {
+    animalBtn[i].addEventListener("click", function() {
+      path = this.id;
 
-  function init() {
+      removeElement();
+      init(path);
+      animate();
+    });
+ }
+
+  function init(path) {
     const container = document.getElementById("container");
 
     let containerDimensions = container.getBoundingClientRect();
 
     camera = new THREE.PerspectiveCamera(
       45,
-      window.innerWidth / window.innerHeight,
+      document.getElementById("container").offsetWidth / (window.innerHeight - document.getElementById("top").offsetHeight),
       1,
       2000
     );
@@ -43,10 +57,9 @@ import * as THREE from "./three.module.js";
     camera.lookAt(new THREE.Vector3(0, 0, 0));
 
     //renderer
-    renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer = new THREE.WebGLRenderer({ antialias: true , canvas: modelCanvas});
     renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    // renderer.setSize(containerDimensions.width, containerDimensions.height);
+    renderer.setSize(document.getElementById("container").offsetWidth, (window.innerHeight - document.getElementById("top").offsetHeight));
     renderer.outputEncoding = THREE.sRGBEncoding;
     renderer.shadowMap.enabled = true;
 
@@ -71,10 +84,24 @@ import * as THREE from "./three.module.js";
     // Load a glTF resource
     loader.load(
       // resource URL
-      "./model/bee.glb",
+      path,
       // called when the resource is loaded
       function (gltf) {
+        mixer = new THREE.AnimationMixer(gltf.scene);
+        animations = gltf.animations;
+        if (animations.length != 0)
+        {
+          action = mixer.clipAction(animations[0]);
+
+          console.log(action);
+  
+          action.play();
+        }
+        
         scene.add(gltf.scene);
+
+        // add animation button
+        createAnimationButton();
 
         gltf.animations; // Array<THREE.AnimationClip>
         myOBJ = gltf.scene; // THREE.Group
@@ -102,8 +129,57 @@ import * as THREE from "./three.module.js";
   };
 
   function animate() {
+    if (mixer) mixer.update(clock.getDelta());
     requestAnimationFrame(animate);
 
     renderer.render(scene, camera);
   }
+
+// create animation button
+  function createAnimationButton() {
+    if (animations.length == 0)
+    {
+      var div = document.createElement("div");
+      div.innerHTML = "This model has no Animation.";
+      div.id = "div_tip";
+
+      animationBtnField.appendChild(div);
+    }
+   for (var i = 0; i < animations.length; i++) {
+     var button = document.createElement("button");
+     button.innerHTML = "Animation " + (i + 1);
+     button.id = i;
+     button.className = "animationBtn";
+
+     button.addEventListener("click", function () {
+       console.log(this.id);
+       mixer = new THREE.AnimationMixer(scene);
+       action = mixer.clipAction(animations[this.id]);
+       action.play();
+     });
+
+     animationBtnField.appendChild(button);
+   }
+ }
+
+  // responsive canvas
+  $(window).resize(function() {
+    removeElement();
+    init(path);
+  });
+  
+  // remove animation button for creating new one
+  function removeElement()
+  {
+    if ( $('#animationBtnField').children().length > 0 ) 
+    {
+      var node = document.getElementById("animationBtnField");
+      var node_length = $('#animationBtnField').children().length;
+      for(var i = 0; i < node_length; i++)
+      {
+        node.removeChild(node.childNodes[0]); 
+      }
+    }
+  } 
+
 })();

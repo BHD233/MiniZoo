@@ -948,8 +948,8 @@ THREE.MTLLoader.MaterialCreator.prototype = {
 
     var mouseX = 0, mouseY = 0;
 
-    var windowHalfX = window.innerWidth / 2;
-    var windowHalfY = window.innerHeight / 2;
+    var windowHalfX = document.getElementById("container").offsetWidth / 2;
+    var windowHalfY = (window.innerHeight - document.getElementById("top").offsetHeight) / 2;
 
     // boolean
     var isUpward = true;
@@ -963,7 +963,7 @@ THREE.MTLLoader.MaterialCreator.prototype = {
         container = document.createElement('div');
         document.body.appendChild(container);
         
-        camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
+        camera = new THREE.PerspectiveCamera(45, document.getElementById("container").offsetWidth / (window.innerHeight - document.getElementById("top").offsetHeight), 1, 2000);
         //camera.position.z = 200;
         camera.position.z = 120;
         camera.position.y = 100;
@@ -971,7 +971,7 @@ THREE.MTLLoader.MaterialCreator.prototype = {
         camera.lookAt(new THREE.Vector3(0,0,0));
         
         renderer = new THREE.WebGLRenderer();
-        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setSize(document.getElementById("container").offsetWidth, (window.innerHeight - document.getElementById("top").offsetHeight));
         document.body.appendChild(renderer.domElement);
 
         // scene
