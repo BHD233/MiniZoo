@@ -3,22 +3,14 @@ import { OrbitControls } from "./OrbitControls.js";
 import * as THREE from "./three.module.js";
 
 (function () {
-  var container, stats, mixer;
+  var mixer;
 
   var camera, scene, renderer, controls, animations, action, path;
 
   var myOBJ = null;
 
-  var mouseX = 0,
-    mouseY = 0;
-
   var animationBtnField = document.getElementById("animationBtnField");
-
-  var windowHalfX = document.getElementById("container").offsetWidth / 2;
-
-  var windowHalfY = (window.innerHeight - document.getElementById("top").offsetHeight) / 2;
-
-  var isUpward = true;
+  var top = document.getElementById("top");
 
   var FLUFF_OBJ_NUM = 100;
 
@@ -33,6 +25,13 @@ import * as THREE from "./three.module.js";
       path = this.id;
 
       removeElement();
+
+      // create model name
+      var div_model = document.createElement("div");
+      div_model.id = "div_model";
+      div_model.innerHTML = "Viewing: " + path.slice(8);
+      top.appendChild(div_model);
+
       init(path);
       animate();
     });
@@ -40,21 +39,6 @@ import * as THREE from "./three.module.js";
 
   function init(path) {
     const container = document.getElementById("container");
-
-    let containerDimensions = container.getBoundingClientRect();
-
-    camera = new THREE.PerspectiveCamera(
-      45,
-      document.getElementById("container").offsetWidth / (window.innerHeight - document.getElementById("top").offsetHeight),
-      1,
-      2000
-    );
-
-    //camera
-    camera.position.z = 120;
-    camera.position.y = 100;
-    camera.up = new THREE.Vector3(0, 0, 1);
-    camera.lookAt(new THREE.Vector3(0, 0, 0));
 
     //renderer
     renderer = new THREE.WebGLRenderer({ antialias: true , canvas: modelCanvas});
@@ -65,17 +49,49 @@ import * as THREE from "./three.module.js";
 
     container.appendChild(renderer.domElement);
 
-    // controls
-    controls = new OrbitControls(camera, renderer.domElement);
+    //camera
+    camera = new THREE.PerspectiveCamera(
+      45,
+      document.getElementById("container").offsetWidth / (window.innerHeight - document.getElementById("top").offsetHeight),
+      1,
+      2000
+    );
 
     // scene
     scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x666666);
 
+    //camera
+    if (path == "./model/bee.glb") {
+        camera.position.z = 120;
+        camera.position.y = 90
+    } else {
+        camera.position.z = 4;
+        camera.position.y = 3;
+    }
+    camera.up = new THREE.Vector3(0, 0, -1);
+    camera.lookAt(new THREE.Vector3(0, 0, 0));
+
+    // controls
+    controls = new OrbitControls(camera, renderer.domElement);
+
+    //light
     var ambient = new THREE.AmbientLight(0xd0caca);
     scene.add(ambient);
 
     var directionalLight = new THREE.DirectionalLight(0xffeedd);
-    directionalLight.position.set(0, 0, 1);
+    directionalLight.position.set(150, 50, 100);
+
+    //set shadow
+    directionalLight.castShadow = true;
+    directionalLight.shadow.mapSize = new THREE.Vector2(1024, 1024);
+    directionalLight.shadow.camera.near = 0.1;
+    directionalLight.shadow.camera.far = 1500;
+    directionalLight.shadow.camera.left = 15 * -1;
+    directionalLight.shadow.camera.right = 15;
+    directionalLight.shadow.camera.top = 15;
+    directionalLight.shadow.camera.bottom = 15 * -1;
+
     scene.add(directionalLight);
 
     // instantiate a loader
@@ -87,29 +103,39 @@ import * as THREE from "./three.module.js";
       path,
       // called when the resource is loaded
       function (gltf) {
+        //load animation
         mixer = new THREE.AnimationMixer(gltf.scene);
         animations = gltf.animations;
         if (animations.length != 0)
         {
           action = mixer.clipAction(animations[0]);
 
-          console.log(action);
-  
           action.play();
         }
         
+        //get object and make it cast shadow
+        gltf.scene.traverse(function(child) {
+            if(child instanceof THREE.Mesh)
+            {
+               //child.material.wireframe = true;
+               child.castShadow = true;
+               child.receiveShadow = true;
+               child.position.y = 0;
+               //child.flatShading = THREE.SmoothShading;
+            }
+        });
+
         scene.add(gltf.scene);
 
         // add animation button
         createAnimationButton();
 
+        //all atribute of gltf
         gltf.animations; // Array<THREE.AnimationClip>
         myOBJ = gltf.scene; // THREE.Group
         gltf.scenes; // Array<THREE.Group>
         gltf.cameras; // Array<THREE.Camera>
         gltf.asset; // Object
-
-        myOBJ.rotation.x = 15;
 
         render();
       },
@@ -122,6 +148,21 @@ import * as THREE from "./three.module.js";
         console.log(error);
       }
     );
+
+    //create floor to receive shadow
+
+    let floorGeometry = new THREE.PlaneGeometry(5000, 5000, 1, 1);
+    let floorMaterial = new THREE.MeshPhongMaterial({
+        color: 0xeeeeee,
+        shininess: 0,
+    });
+
+    let floor = new THREE.Mesh(floorGeometry, floorMaterial);
+    floor.rotation.x = -0.5 * Math.PI;
+    floor.receiveShadow = true;
+    floor.position.y = 0;
+    scene.add(floor);
+
   }
 
   var render = function () {
@@ -168,17 +209,26 @@ import * as THREE from "./three.module.js";
     init(path);
   });
   
-  // remove animation button for creating new one
+  // remove animation button and div_model
   function removeElement()
   {
-    if ( $('#animationBtnField').children().length > 0 ) 
+    // remove animation button
+    var node = document.getElementById("animationBtnField");
+    var node_length = $('#animationBtnField').children().length;
+    if ( node_length > 0 ) 
     {
-      var node = document.getElementById("animationBtnField");
-      var node_length = $('#animationBtnField').children().length;
       for(var i = 0; i < node_length; i++)
       {
         node.removeChild(node.childNodes[0]); 
       }
+    }
+
+    // remove div_model
+    var div = document.getElementById("div_model");
+    var div_length = $('#top').children().length;
+    if ( div_length > 1 )
+    {
+        div.parentNode.removeChild(div);
     }
   } 
 
